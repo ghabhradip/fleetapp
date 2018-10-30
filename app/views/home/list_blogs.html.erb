@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <center>
+            <h2>All blogs</h2>
+        </center>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+
+<% if @blogs.count < 1%>
+	<center>
+        <h4>No blogs have been created yet.</h4>
+    </center>	
+<%else%>
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <table class="table table-bordered">
+			<thead>
+				<tr>
+					<th class="col-md-3">Title</th>
+					<th class="col-md-6">Body</th>
+					<th class="col-md-3">Author</th>
+					<th class="col-md-1"></th>
+					<th class="col-md-1"></th>
+					<th class="col-md-1"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<%@blogs.each do |blog|%>
+					<tr>
+						<td class="col-md-3"><%= blog.title %></td>
+						<td class="col-md-6"><%= blog.body %></td>
+						<td class="col-md-6"><%= blog.user_email %></td>
+						<td class="col-md-1">
+  							<%= link_to 'Show', blog_path(blog), :class => "btn btn-primary"%> 
+						</td>
+						<td class="col-md-1">
+  							<%= link_to 'Edit', edit_blog_path(blog), :class => "btn btn-success"%> 
+						</td>
+						<td class="col-md-1">
+  							<%= link_to 'Delete',blog, :method => 'delete',  :data => {:confirm => 'Are you sure?'}, :class => "btn btn-danger"%> 
+						</td>
+					</tr>
+				<%end%>
+			</tbody>
+		</table>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+<%end%>
+</div>

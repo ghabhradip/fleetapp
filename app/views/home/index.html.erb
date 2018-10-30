@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <center>
+            <h2>All users</h2>
+        </center>
+    </div>
+    <div class="col-sm-1"></div>
+  </div>
+
+
+<div class="row">
+  <div class="col-sm-1"></div>
+	<div class="col-sm-10">
+	    <table class="table table-bordered">
+			<thead>
+				<tr>
+					<th class="col-md-3">email </th>
+					<th class="col-md-1">Role</th>
+					<th class="col-md-1">Blacklisted</th>
+					<th class="col-md-1">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<%@users.each do |user|%>
+					<tr>
+						<td class="col-md-3"><%= user.email %></td>
+						<td class="col-md-1">
+							<%if user.is_admin?%>
+								Admin
+							<%else%>
+							<%end%>
+						</td>
+						<td class="col-md-1">
+							<%if user.is_blacklisted?%>
+								Blacklisted
+							<%else%>
+							<%end%>
+						</td>
+						<td class="col-md-1">
+							<%if user.is_blacklisted?%>
+								<%= link_to 'Activate', activate_user_home_path(user) %> 
+							<%else%>
+								<%if !user.is_admin?%>
+									<%= link_to 'Blacklist', blacklist_user_home_path(user) %>
+								<%end%> 
+							<%end%>
+						</td>
+					</tr>
+				<%end%>
+			</tbody>
+		</table>
+	</div>
+  <div class="col-sm-1"></div>
+</div>
+
+</div>
