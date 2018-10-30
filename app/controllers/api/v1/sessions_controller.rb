@@ -10,9 +10,12 @@ module Api
 				  if user.valid_password?(params['password']) then
 				    sign_in(user)
 				    user.update_attributes(:is_signed_in => true)
+				    token_string = user.email+user.encrypted_password
+				    token = Digest::MD5.hexdigest(token_string)
 				    render json:
 			          {
-			            Type: 'Success - signed in successfully.' 
+			            Type: 'Success - signed in successfully.',
+			            authenticity_token: token
 			          }, status: 200
 				  else
 				    render json:

@@ -7,21 +7,40 @@ module Api
 
 			def user_blogs
 				user = User.find_by_email(params[:author_email])
-				if user.present?
-					associated_blogs = user.blogs
-					
-					render json:
-			          {
-			            Type: 'Success',
-			            Author: user.email,
-			            Blogs: associated_blogs
-			          }, status: 200	
-				else
+				token = params[:authenticity_token]
+
+				token_string = user.email+user.encrypted_password
+				generated_token = Digest::MD5.hexdigest(token_string)
+
+				if token == generated_token
+					if user.present?
+						if user.is_signed_in?
+							associated_blogs = user.blogs
+							
+							render json:
+					          {
+					            Type: 'Success',
+					            Author: user.email,
+					            Blogs: associated_blogs
+					          }, status: 200
+					    else
+					      render json:
+				          {
+				            Type: 'Failure - please sign in to continue.' 
+				          }, status: 400
+					    end	
+					else
+				    	render json:
+				          {
+				            Type: 'Failure - No such user exists.' 
+				          }, status: 400
+			      	end
+			    else
 			    	render json:
-			          {
-			            Type: 'Failure - No such user exists.' 
-			          }, status: 400
-		      	end
+				          {
+				            Type: 'Failure - Invalid authenticity token.' 
+				          }, status: 400
+			    end
 			end
 
 			def all_blogs
