@@ -36,7 +36,7 @@ Rails.application.routes.draw do
       get '/users/all_users' => 'users#all_users'
 
       post '/blog/user_blogs' => 'blog#user_blogs'
-      get '/blog/all_blogs' => 'blog#all_blogs'
+      post '/blog/all_blogs' => 'blog#all_blogs'
       post '/blog/get_blog' => 'blog#get_blog'
 
       get 'sessions/get_authenticity_token' => 'sessions#retrieve_authenticity_token'
