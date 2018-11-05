@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+
   resources :home do
     member do
         get :blacklist_user
@@ -14,6 +15,8 @@ Rails.application.routes.draw do
   resources :home
 
   resources :blog
+
+  resources :orders
 
   #devise_for :users
   devise_for :users, :controllers => { registrations: 'registrations', sessions: 'sessions'}

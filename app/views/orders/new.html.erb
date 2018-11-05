@@ -1,0 +1,250 @@
+<%= form_for(@order, url: '/orders') do |f| %>
+ 
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <center>
+            <h2 id="delivery_request_page_heading">Place Delivery Request</h2>
+        </center>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+
+
+  <div class="row" id="basic_details">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+    	<div class="form-group">
+            <div>
+            	<label class="request_label">
+            		Requesting for self?
+            	</label>
+
+            	<label class="switch">
+				  <input type="checkbox" id="for_self" checked>
+				  <span class="slider round"></span>
+				</label>
+            </div>
+        </div>
+
+
+    	<div class="form-group">
+            <div>
+                <%= f.text_field :customer_name, value: @user_name, autocomplete: "off", class: "form-control", placeholder: "Customer name" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <%= f.text_area :pickup_address, autocomplete: "off", class: "form-control", placeholder: "Mention your pickup address" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+            	<div class="col-sm-6">
+                	<%= f.text_field :pickup_date, class: "form-control", "data-provide" => 'datepicker', placeholder: "Pickup date" %>
+                </div>
+
+                <div class="col-sm-6">
+                	<%= f.text_field :pickup_time, class: "form-control timepicker", placeholder: "Pickup time" %>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div>
+                <%= f.text_area :delivery_address, autocomplete: "off", class: "form-control", placeholder: "Mention your delivery address" %>
+            </div>
+        </div>
+
+
+
+        <div class="form-group">
+            <div>
+            	<label class="request_label">
+            		Scheduled Delivery?
+            	</label>
+
+            	<label class="switch">
+				  <input type="checkbox" id="for_scheduled_delivery">
+				  <span class="slider round"></span>
+				</label>
+            </div>
+        </div>
+
+        <div class="form-group" id="scheduled_delivery_section">
+            <div class="row">
+            	<div class="col-sm-6">
+                	<%= f.text_field :delivery_date, autocomplete: "off", class: "form-control", "data-provide" => 'datepicker', placeholder: "Delivery date" %>
+                </div>
+
+                <div class="col-sm-6">
+                	<%= f.text_field :delivery_time, autocomplete: "off", class: "form-control timepicker", placeholder: "Delivery time" %>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="form-group order-item-holder">
+        	<h4>Add order items</h4>
+            <div class="row order-item-row">
+            	<div class="col-sm-5">
+                	<input type="text" name="order_item_names[]" class="form-control item-name", placeholder="Item name">
+                </div>
+
+                <div class="col-sm-5">
+                	<input type="text" name="order_item_weights[]" class="form-control item-weight", placeholder="Approximate weight">
+                </div>
+
+                <div class="col-sm-1">
+                	<span class="glyphicon glyphicon-plus"></span>
+                </div>
+
+                <div class="col-sm-1">
+                	<span class="glyphicon glyphicon-minus"></span>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+        <div class="form-group">
+            <div>
+                <button type="button" class="btn btn-success" id="place_request_button">Place request</button>
+                <%= link_to "Cancel", list_blogs_home_index_path, class: "btn btn-primary", :method => "get" %>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+
+
+
+   <div class="row" id="order_summary">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+    	<div class="form-group">
+            <b>Order placed by - </b><b id="placed_by"></b><br> 
+            <b>Pickup address -</b><b id="pickup_address"></b><br>
+            <b>Pickup date -</b><b id="pickup_date"></b><br>
+            <b>Pickup time -</b><b id="pickup_time"></b><br>
+            <b>Delivery Address -</b><b id="delivery_address"></b><br>
+        </div>
+
+        <div class="form-group">
+           <table class="table table-bordered">
+			<thead>
+				<tr>
+					<th class="col-md-3">Item</th>
+					<th class="col-md-6">Weight</th>
+					<th class="col-md-6">Cost</th>
+				</tr>
+			</thead>
+			<tbody id="order_item_tbody">
+				
+			</tbody>
+		</table>
+        </div>
+
+         <div class="form-group">
+            <div>
+                <button type="button" class="btn btn-success" id="make_payment_button">Make payment</button>
+                <%= link_to "Cancel", list_blogs_home_index_path, class: "btn btn-primary", :method => "get" %>
+                <button type="button" class="btn btn-warning" id="make_payment_button">Back</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+
+
+   <div class="row" id="payment_details">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+    	
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+</div>
+<% end %>
+
+
+
+<script>
+$('.timepicker').timepicker();
+$("#scheduled_delivery_section").hide();
+
+$("#basic_details").show();
+$("#order_summary").hide();
+
+$( ".glyphicon-plus" ).on( "click", function() {
+	$(".order-item-holder").append($(this).closest('.order-item-row').clone(true,true));
+
+	//clearing all the data of the cloned object
+	$(".order-item-row").last().each(function() {
+	  $(this).find('.item-name').val("");
+	  $(this).find('.item-weight').val("");
+	});	
+});
+
+$( ".glyphicon-minus" ).on( "click", function() {
+	if( $('.order-item-row').length == 1)
+	{
+	    $.notify("Please add atleast one item details"); 
+	}
+	else
+	{
+		$(this).closest('.order-item-row').remove();
+	}
+});
+
+
+$( "#for_self" ).on( "click", function() {
+	if($(this).is(':checked'))
+	{
+		$('#order_customer_name').val(gon.user_name);
+	}
+	else
+	{
+		$('#order_customer_name').val("");
+	}
+});
+
+$( "#for_scheduled_delivery" ).on( "click", function() {
+	if($(this).is(':checked'))
+	{
+		$("#scheduled_delivery_section").show();
+		$("#order_delivery_date").val("");
+		$("#order_delivery_time").val("");
+	}
+	else
+	{
+		$("#scheduled_delivery_section").hide();
+	}
+});
+
+$( "#place_request_button" ).on( "click", function() {
+
+	// All JS checking will happen here-------------------
+
+	$("#basic_details").hide();
+	$("#order_summary").show();
+
+	$("#placed_by").html($("#order_customer_name").val());
+	$("#pickup_address").html($("#order_pickup_address").val());
+	$("#pickup_date").html($("#order_pickup_date").val());
+	$("#pickup_time").html($("#order_pickup_time").val());
+	$("#delivery_address").html($("#order_delivery_address").val());
+
+	$("#delivery_request_page_heading").html("Order summary");
+});
+</script>
+
+<style>
+	.order-item-row
+	{
+		padding-bottom: 17px;
+	}
+</style>

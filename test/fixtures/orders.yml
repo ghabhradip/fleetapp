@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  customer_name: MyString
+  pickup_address: MyText
+  delivery_address: MyText
+  pickup_time: 2018-11-01 15:02:08
+  delivery_time: 2018-11-01 15:02:08
+  scheduled_delivery_request: false
+  for_self: false
+
+two:
+  customer_name: MyString
+  pickup_address: MyText
+  delivery_address: MyText
+  pickup_time: 2018-11-01 15:02:08
+  delivery_time: 2018-11-01 15:02:08
+  scheduled_delivery_request: false
+  for_self: false
