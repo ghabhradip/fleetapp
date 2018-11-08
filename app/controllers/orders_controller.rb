@@ -60,4 +60,21 @@ class OrdersController < ApplicationController
 
   def destroy
   end
+
+  def calculate_cost
+    cost_array = []
+    weight_array = params[:weight]
+    weight_array.each do |weight|
+      weight = weight.to_f
+      if weight < 1000
+        cost = 20
+      elsif weight >= 1000 && weight < 5000
+        cost = 50
+      elsif weight >= 5000
+        cost = 100    
+      end
+      cost_array.push(cost)
+    end
+    render plain: cost_array
+  end
 end

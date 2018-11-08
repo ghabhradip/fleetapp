@@ -16,7 +16,11 @@ Rails.application.routes.draw do
 
   resources :blog
 
-  resources :orders
+  resources :orders do
+    collection do
+        post :calculate_cost
+    end
+  end
 
   #devise_for :users
   devise_for :users, :controllers => { registrations: 'registrations', sessions: 'sessions'}
