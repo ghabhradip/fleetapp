@@ -1,0 +1,43 @@
+<div class="container">
+	<center>
+        <h2>Order history</h2>
+    </center>
+  <% @orders.each do |order| %>
+  <br>
+	  <div class="row">
+	    <div class="col-sm-5">
+	    	<b>Custome name - </b><%=order.customer_name%><br>
+	    	<b>Pickup date - </b><%=order.pickup_date.strftime("%m/%d/%Y")%><br>
+	    	<b>Pickup time - </b><%=order.pickup_time.strftime("%I:%M %p") %><br>
+	    	<b>Pickup address - </b><%=order.pickup_address%><br>
+	    	<b>Delivery address - </b><%=order.delivery_address%><br>
+
+	    	<%if order.scheduled_delivery_request?%>
+	    		<b>Delivery date - </b><%=order.delivery_date.strftime("%m/%d/%Y")%><br>
+	    		<b>Delivery time - </b><%=order.delivery_time.strftime("%I:%M %p")%><br>
+	    	<%end%>
+
+	    </div>
+	    <div class="col-sm-3">
+	        <%if order.payment_received?%>
+	    		<b>Payment mode - </b>Online payment<br>
+	    	<%else%>
+	    		<b>Payment mode - </b>Pay on pickup<br>
+	    	<%end%>
+	    </div>
+	    <div class="col-sm-2">
+	    	<%if order.status == "open"%>
+	    		<b>Processing</b><br>
+	    	<%else%>
+	    		<b>Completed</b>
+	    	<%end%>
+	    </div>
+	    <div class="col-sm-2">
+	    	<%if order.status != "open"%>
+	    		<a class="btn btn-sm btn-warning" href="#">Track</a>
+	    	<%end%>
+	    </div>
+	  </div>
+	  <hr>
+  <%end%>
+</div>

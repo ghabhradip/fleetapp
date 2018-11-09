@@ -170,18 +170,34 @@
     <div class="col-sm-3"></div>
     <div class="col-sm-6">
         <div class="form-group">
-            
+            <div class="inputGroup">
+                <input id="pop_radio" name="pop_radio" type="radio"/>
+                <label for="pop_radio">Pay on pickup</label>
+            </div>
+            <div class="inputGroup">
+                <input id="online_payment_radio" name="online_payment_radio" type="radio"/>
+                <label for="online_payment_radio">Online payment</label>
+            </div>
         </div>
 
-        <div class="form-group">
-          
+        <div class="form-group" id="pop">
+            <div class="pop-message">
+                <small>Please pay <b id="pop_money_value"></b> to our executive during the time of parcel pickup.</small>
+            </div>
         </div>
+
+        <div class="form-group" id="online_payment">
+           <div class="op-message">
+                <small>Online payment option is not available as of now.</small>
+            </div>
+        </div>
+
+
 
          <div class="form-group">
             <div>
-                <button type="button" class="btn btn-success" id="make_payment_button">Make payment</button>
-                <%= link_to "Cancel", list_blogs_home_index_path, class: "btn btn-primary", :method => "get" %>
-                <button type="button" class="btn btn-warning" id="back_button">Back</button>
+                <button type="button" class="btn btn-success" id="order_submit_button">Place request</button>
+                <%= link_to "Cancel", list_blogs_home_index_path, class: "btn btn-primary", id: "order_cancel_button", :method => "get" %>
             </div>
         </div>
     </div>
@@ -207,6 +223,7 @@ $("#scheduled_delivery_section").hide();
 
 $("#basic_details").show();
 $("#order_summary").hide();
+$("#payment_section").hide();
 
 $( ".glyphicon-plus" ).on( "click", function() {
 	$(".order-item-holder").append($(this).closest('.order-item-row').clone(true,true));
@@ -265,6 +282,7 @@ $( "#place_request_button" ).on( "click", function() {
 
 	$("#basic_details").hide();
 	$("#order_summary").show();
+    $("#payment_section").hide();
 
 	$("#placed_by").html($("#order_customer_name").val());
 	$("#pickup_address").html($("#order_pickup_address").val());
@@ -331,11 +349,55 @@ $( "#back_button" ).on( "click", function() {
 });
 
 
-// $( "#make_payment_button" ).on( "click", function() {   
-//     $("#basic_details").hide();
-//     $("#order_summary").hide();
-//     $("#order_summary_table > tbody").empty();
-// });
+$( "#make_payment_button" ).on( "click", function() {
+    // All JS checking will happen here--------------------------
+
+    $("#basic_details").hide();
+    $("#order_summary").hide();
+    $("#payment_section").show();
+    $("#delivery_request_page_heading").html("Payment");
+    $("#pop").hide();
+    $("#online_payment").hide();
+
+    $("#order_submit_button").hide();
+    $("#order_cancel_button").hide();
+
+});
+
+$("input[name='pop_radio']").change(function(){
+    if($(this).prop('checked'))
+    {
+        $("input[name='online_payment_radio']").prop('checked',false);
+        $("#pop").show();
+        $("#online_payment").hide();
+
+        var payable_amount = $("#payable_span").html().replace("Net payable - ","");
+        $("#pop_money_value").html("<b>INR </b>"+payable_amount);
+        $("#order_submit_button").show();
+        $("#order_cancel_button").show();
+    }
+    
+});
+
+$("input[name='online_payment_radio']").change(function(){
+    if($(this).prop('checked'))
+    {
+        $("input[name='pop_radio']").prop('checked',false);
+        $("#pop").hide();
+        $("#online_payment").show();
+        $("#order_submit_button").hide();
+        $("#order_cancel_button").hide();
+    }
+    
+});
+
+$( "#order_submit_button" ).on( "click", function() {
+    // All JS checking will happen here--------------------------
+
+    $('form').submit();
+
+});
+
 </script>
 
 <style>
@@ -354,5 +416,34 @@ $( "#back_button" ).on( "click", function() {
     .right-aligned-td
     {
         text-align: right;
+    }
+    .pop-message
+    {
+        height: 47px;
+        background-color: #ccffcc;
+        border-radius: 6px;
+        border: 2px solid #1f7a1f;
+        text-align: center;
+        padding: 10px;
+    }
+    .op-message
+    {
+        height: 47px;
+        background-color: #ffcccc;
+        border-radius: 6px;
+        border: 2px solid #800000;
+        text-align: center;
+        padding: 10px;
+    }
+    .pop-message small
+    {
+        font-size: 97%;
+        color: #1f7a1f;
+    }
+
+    .op-message small
+    {
+        font-size: 97%;
+        color: #800000;
     }
 </style>

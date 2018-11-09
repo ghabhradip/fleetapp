@@ -32,6 +32,12 @@ class OrdersController < ApplicationController
       @order.for_self = true
     end
 
+    @order.status = "open"
+
+    if params[:pop_radio].present? && params[:pop_radio] == "on"
+      @order.payment_method_id = PaymentMethod.find_by_name("pay on pickup").id
+    end
+
     if @order.save
       if params[:order_item_names].length > 0
         count = 0
@@ -76,5 +82,10 @@ class OrdersController < ApplicationController
       cost_array.push(cost)
     end
     render plain: cost_array
+  end
+
+
+  def history
+    @orders = Order.where(:user_id => current_user.id)
   end
 end
