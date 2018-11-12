@@ -2,6 +2,7 @@ class Order < ApplicationRecord
 	belongs_to :user
 	has_many :order_items
 	has_one :payment_method
+	after_save :notify_pusher, on: :update
 
 	def self.cost(weight)
 		if weight < 1000
@@ -12,4 +13,8 @@ class Order < ApplicationRecord
 			cost = 100		
 		end
 	end
+
+	def notify_pusher
+       Pusher.trigger('feed', 'order-update', self.as_json)
+    end
 end

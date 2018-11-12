@@ -1,0 +1,126 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-7">
+		</div>
+		<div class="col-sm-3">
+			<button id="close_order_button" class="btn btn-xs btn-primary">Close orders</button>
+			<button class="btn btn-xs btn-success">Prioritize</button>
+			<button class="btn btn-xs btn-info">Mark as paid</button>
+		</div>
+	</div>
+	<center>
+        <h2>All orders</h2>
+    </center>
+  <% if @orders.present?%>
+		  <div class="row">
+		    <div class="col-sm-12">
+		    	<table id="order_list_table" class="table table-bordered">
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="select_all[]" value="" /></th>
+							<th>Customer name</th>
+							<th>Placed at</th>
+							<th>Pickup date</th>
+							<th>Pickup time</th>
+							<th>Delivery date</th>
+							<th>Delivery time</th>
+							<th>Payment mode</th>
+							<th>Order status</th>
+							<th>Order value</th>
+							<th>Payment status</th>
+							<th>Valet</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<%@orders.each do |order|%>
+							<%if order.scheduled_delivery_request?%>
+								<tr class="alert alert-info">
+							<%else%>
+								<tr>
+							<%end%>
+								<td><input type="checkbox" name="selected_orders" value="<%=order.id%>" /></td>
+								<td><%= current_user.name%></td>
+
+								<td><%= order.created_at.strftime("%m/%d/%Y")%></td>
+								<td><%= order.pickup_date.strftime("%m/%d/%Y")%></td>
+								<td><%= order.pickup_time.strftime("%I:%M %p")%></td>
+
+								<%if order.scheduled_delivery_request?%>
+									<td><%= order.delivery_date.strftime("%m/%d/%Y")%></td>
+									<td><%= order.delivery_time.strftime("%I:%M %p")%></td>
+								<%else%>
+									<td></td>
+									<td></td>
+								<%end%>
+
+								<%if PaymentMethod.find(order.payment_method_id).name == "pay on pickup" %>
+									<td>Pay on pickup</td>
+								<%elsif PaymentMethod.find(order.payment_method_id).name == "online payment"%>
+									<td>Online payment</td>
+								<%end%>
+
+								<%if order.status == "open"%>
+									<td id="status_<%=order.id%>">Processing</td>
+								<%else%>
+									<td id="status_<%=order.id%>"><b style="color: red;">Closed</b></td>
+								<%end%>
+
+								<td><%= order.value%></td>
+
+								<%if order.payment_received?%>
+									<td>Received</td>
+								<%else%>
+									<td>Not received</td>
+								<%end%>
+
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+						<%end%>
+					</tbody>
+				</table>
+		    </div>
+  <%else%>
+  	<center><b>No order placed yet.</b></center>
+  <%end%>
+</div>
+
+
+<script>
+$(document).ready(function() {
+    $('#order_list_table').DataTable({
+    	// scrollY: 800
+    });
+});
+
+$( "#close_order_button" ).on( "click", function() {
+	var order_ids = [];
+    $.each($("input[name='selected_orders']:checked"), function(){            
+        order_ids.push($(this).val());
+    });
+    $.ajax({
+        url: "/orders/close_orders", 
+        type: "POST",
+        data: { order_ids: order_ids},
+        success: function(result){
+           $.each(order_ids, function( index, value ) {
+			  $("#status_"+value).html("<b style='color:red;'>Closed</b>");
+			});
+           $.notify("Selected orders have been closed.","success");
+
+        }
+    });
+});
+</script>
+
+
+<style>
+#order_list_table tbody th, #order_list_table tbody td {
+    padding: 8px 10px; /* e.g. change 8x to 4px here */
+}
+</style>

@@ -19,7 +19,9 @@ Rails.application.routes.draw do
   resources :orders do
     collection do
         post :calculate_cost
+        post :close_orders
         get :history, as: "history"
+        get :list, as: "list"
     end
   end
 

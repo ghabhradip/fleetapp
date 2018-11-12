@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :blogs
   has_many :orders
+  has_many :notifications, as: :recipient
 
   def name
   	self.first_name+" "+self.last_name

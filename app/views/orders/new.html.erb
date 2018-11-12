@@ -213,6 +213,7 @@
     <div class="col-sm-3"></div>
   </div>
 </div>
+<%= hidden_field_tag 'order_value', ''%>
 <% end %>
 
 
@@ -393,7 +394,9 @@ $("input[name='online_payment_radio']").change(function(){
 
 $( "#order_submit_button" ).on( "click", function() {
     // All JS checking will happen here--------------------------
-
+    var order_value = $("#payable_span").html().replace("Net payable - ","").replace("<b>","").replace("</b>","");
+    alert(order_value);
+    $("#order_value").val(order_value);
     $('form').submit();
 
 });

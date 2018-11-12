@@ -33,6 +33,7 @@ class OrdersController < ApplicationController
     end
 
     @order.status = "open"
+    @order.value = params[:order_value].to_f
 
     if params[:pop_radio].present? && params[:pop_radio] == "on"
       @order.payment_method_id = PaymentMethod.find_by_name("pay on pickup").id
@@ -87,5 +88,17 @@ class OrdersController < ApplicationController
 
   def history
     @orders = Order.where(:user_id => current_user.id)
+  end
+
+  def list
+    @orders = Order.all
+  end
+
+  def close_orders
+    order_ids = params[:order_ids]
+    order_ids.each do |order_id|
+      Order.find(order_id.to_i).update_attributes(:status => "closed")
+    end
+    render plain: "success"
   end
 end
