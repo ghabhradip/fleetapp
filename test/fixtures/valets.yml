@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  address: MyText
+  aadhar_number: MyString
+  voter_id_number: MyString
+  current_latitude: MyString
+  current_longitude: MyString
+  available: false
+
+two:
+  name: MyString
+  address: MyText
+  aadhar_number: MyString
+  voter_id_number: MyString
+  current_latitude: MyString
+  current_longitude: MyString
+  available: false

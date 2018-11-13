@@ -101,4 +101,21 @@ class OrdersController < ApplicationController
     end
     render plain: "success"
   end
+
+  def open_orders
+    order_ids = params[:order_ids]
+    order_ids.each do |order_id|
+      Order.find(order_id.to_i).update_attributes(:status => "open")
+    end
+    render plain: "success"
+  end
+
+
+  def mark_as_paid
+    order_ids = params[:order_ids]
+    order_ids.each do |order_id|
+      Order.find(order_id.to_i).update_attributes(:payment_received => true, :payment_method_id => PaymentMethod.find_by_name("online payment").id)
+    end
+    render plain: "success"
+  end
 end

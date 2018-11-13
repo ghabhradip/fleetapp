@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_12_120322) do
+ActiveRecord::Schema.define(version: 2018_11_13_055044) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,18 @@ ActiveRecord::Schema.define(version: 2018_11_12_120322) do
     t.boolean "is_signed_in"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "valets", force: :cascade do |t|
+    t.string "name"
+    t.text "address"
+    t.string "aadhar_number"
+    t.string "voter_id_number"
+    t.string "current_latitude"
+    t.string "current_longitude"
+    t.boolean "available"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "notifications", "users"

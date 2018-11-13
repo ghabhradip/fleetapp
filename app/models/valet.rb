@@ -1,0 +1,2 @@
+class Valet < ApplicationRecord
+end

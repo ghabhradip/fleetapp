@@ -1,13 +1,14 @@
 <div class="container">
 	<div class="row">
-		<div class="col-sm-2">
+		<div class="col-sm-1">
 		</div>
 		<div class="col-sm-7">
 		</div>
-		<div class="col-sm-3">
-			<button id="close_order_button" class="btn btn-xs btn-primary">Close orders</button>
+		<div class="col-sm-4">
+			<button id="close_order_button" class="btn btn-xs btn-danger">Close orders</button>
+			<button id="reopen_order_button" class="btn btn-xs btn-primary">Reopen orders</button>
 			<button class="btn btn-xs btn-success">Prioritize</button>
-			<button class="btn btn-xs btn-info">Mark as paid</button>
+			<button id="paid_button" class="btn btn-xs btn-info">Mark as paid</button>
 		</div>
 	</div>
 	<center>
@@ -72,13 +73,13 @@
 								<td><%= order.value%></td>
 
 								<%if order.payment_received?%>
-									<td>Received</td>
+									<td id="payment_status_<%=order.id%>">Received</td>
 								<%else%>
-									<td>Not received</td>
+									<td id="payment_status_<%=order.id%>">Not received</td>
 								<%end%>
 
 								<td></td>
-								<td></td>
+								<td><span><i class="far fa-bell"></i></span></td>
 								<td></td>
 							</tr>
 						<%end%>
@@ -112,6 +113,46 @@ $( "#close_order_button" ).on( "click", function() {
 			  $("#status_"+value).html("<b style='color:red;'>Closed</b>");
 			});
            $.notify("Selected orders have been closed.","success");
+
+        }
+    });
+});
+
+
+$( "#reopen_order_button" ).on( "click", function() {
+	var order_ids = [];
+    $.each($("input[name='selected_orders']:checked"), function(){            
+        order_ids.push($(this).val());
+    });
+    $.ajax({
+        url: "/orders/open_orders", 
+        type: "POST",
+        data: { order_ids: order_ids},
+        success: function(result){
+           $.each(order_ids, function( index, value ) {
+			  $("#status_"+value).html("Processing");
+			});
+           $.notify("Selected orders have been reopened.","success");
+
+        }
+    });
+});
+
+
+$( "#paid_button" ).on( "click", function() {
+	var order_ids = [];
+    $.each($("input[name='selected_orders']:checked"), function(){            
+        order_ids.push($(this).val());
+    });
+    $.ajax({
+        url: "/orders/mark_as_paid", 
+        type: "POST",
+        data: { order_ids: order_ids},
+        success: function(result){
+           $.each(order_ids, function( index, value ) {
+			  $("#payment_status_"+value).html("Received");
+			});
+           $.notify("Selected orders have been marked as paid.","info");
 
         }
     });

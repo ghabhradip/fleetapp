@@ -1,0 +1,70 @@
+<%= form_for(@valet, url: '/valet') do |f| %>
+ 
+<div class="container">
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <center>
+            <h2>Register valet</h2>
+        </center>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <div>
+                <%= f.text_field :name, class: "form-control", placeholder: "Enter valet name" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <%= f.text_area :address, autocomplete: "off", class: "form-control", placeholder: "Address" %>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <div>
+                <%= f.text_field :aadhar_number, autocomplete: "off", class: "form-control", placeholder: "Aadhar number" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <%= f.text_field :voter_id_number, autocomplete: "off", class: "form-control", placeholder: "Voter Id number" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <%= f.text_field :current_latitude, autocomplete: "off", class: "form-control", placeholder: "Current latitude" %>
+                </div>
+
+                <div class="col-sm-6">
+                     <%= f.text_field :current_longitude, autocomplete: "off", class: "form-control", placeholder: "Current longitude" %>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <%= text_field_tag "search_place", autocomplete: "off", class: "form-control", placeholder: "Search place" %>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div>
+                <%= f.submit "Submit", class: "btn btn-success" %>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3"></div>
+  </div>
+</div>
+<% end %>
