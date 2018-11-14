@@ -1,0 +1,80 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-1">
+		</div>
+		<div class="col-sm-7">
+		</div>
+		<div class="col-sm-4">
+			<!-- <button id="close_order_button" class="btn btn-xs btn-danger">Close orders</button>
+			<button id="reopen_order_button" class="btn btn-xs btn-primary">Reopen orders</button>
+			<button class="btn btn-xs btn-success">Prioritize</button>
+			<button id="paid_button" class="btn btn-xs btn-info">Mark as paid</button> -->
+		</div>
+	</div>
+	<center>
+        <h2>All valets</h2>
+    </center>
+  <% if @valets.present?%>
+		  <div class="row">
+		    <div class="col-sm-12">
+		    	<table id="valet_list_table" class="table table-bordered">
+					<thead>
+						<tr>
+							<th><input type="checkbox" name="select_all[]" value="" /></th>
+							<th>Id</th>
+							<th>Name</th>
+							<th>Contact</th>
+							<th>Aadhar no</th>
+							<th>Voter no</th>
+							<th>Availability</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<%@valets.each do |valet|%>
+							<%if valet.available?%>
+								<tr class="alert alert-primary">
+							<%else%>
+								<tr>
+							<%end%>
+								<th><input type="checkbox" name="select_valet" value="" /></th>
+								<td><%= valet.id%></td>
+								<td><%= valet.name%></td>
+								<td><%= valet.contact_number%></td>
+								<td><%= valet.aadhar_number%></td>
+								<td><%= valet.voter_id_number%></td>
+								<td>
+									<%if valet.available?%>
+										Available
+									<%else%>
+										Not available
+									<%end%>
+								</td>
+								<td></td>
+								<td></td>
+							</tr>
+						<%end%>
+					</tbody>
+				</table>
+		    </div>
+  <%else%>
+  	<center><b>No valet registered yet.</b></center>
+  <%end%>
+</div>
+
+
+<script>
+$(document).ready(function() {
+    $('#valet_list_table').DataTable({
+    	// scrollY: 800
+    });
+});
+</script>
+
+
+<style>
+#order_list_table tbody th, #order_list_table tbody td {
+    padding: 8px 10px; /* e.g. change 8x to 4px here */
+}
+</style>

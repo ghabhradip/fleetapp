@@ -1,5 +1,6 @@
 class Order < ApplicationRecord
 	belongs_to :user
+	# belongs_to :valet
 	has_many :order_items
 	has_one :payment_method
 	after_save :notify_pusher, on: :update

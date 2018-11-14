@@ -16,7 +16,11 @@ Rails.application.routes.draw do
 
   resources :blog
 
-  resources :valet
+  resources :valet do
+    collection do
+      get :list, as: "list"
+    end
+  end
 
   resources :orders do
     collection do

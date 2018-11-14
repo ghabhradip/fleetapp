@@ -27,6 +27,11 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <div>
+                <%= f.text_field :contact_number, autocomplete: "off", class: "form-control", placeholder: "Contact number" %>
+            </div>
+        </div>
 
         <div class="form-group">
             <div>
@@ -53,14 +58,25 @@
         </div>
 
         <div class="form-group">
-            <div>
-                <%= text_field_tag "search_place", autocomplete: "off", class: "form-control", placeholder: "Search place" %>
+            <div class="row">
+                <div class="col-sm-9">
+                    <%= text_field_tag "search_place", "", class: "form-control", placeholder: "Search location" %>
+                </div>
+
+                <div class="col-sm-3">
+                    <a id="search" class="btn btn-success btn-labeled" href="#" role="button">
+                    <span class="btn-label"><i class="glyphicon glyphicon-search"></i></span>Search</a>
+                </div>
             </div>
         </div>
 
         <div class="form-group">
+            <div id="map_canvas" style="width: auto; height: 250px;" class="map_location"></div>
+        </div>
+
+        <div class="form-group">
             <div>
-                <%= f.submit "Submit", class: "btn btn-success" %>
+                <%= f.submit "Submit", class: "btn btn-primary" %>
             </div>
         </div>
     </div>
@@ -68,3 +84,58 @@
   </div>
 </div>
 <% end %>
+
+<script>
+    $("#valet_current_latitude").prop("readonly",true);
+    $("#valet_current_longitude").prop("readonly",true);
+
+
+    $("#search").on("click",function(){
+        var geocoder = new google.maps.Geocoder();
+        $(".map_location").show();  
+        var add = $("#search_place").val();
+        geocoder.geocode( { 'address': add}, function(results, status) {
+
+          if (status == google.maps.GeocoderStatus.OK) 
+          {
+            var latitude = results[0].geometry.location.lat();
+            var longitude = results[0].geometry.location.lng();  
+            // alert(latitude);
+            // alert(longitude);
+            var map;
+            function initialize() 
+            {
+              var myLatlng = new google.maps.LatLng(latitude, longitude);
+
+              var myOptions = {
+                  zoom: 15,
+                  center: myLatlng,
+                  mapTypeId: google.maps.MapTypeId.ROADMAP
+              };
+              map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+              var marker = new google.maps.Marker({
+                  draggable: true,
+                  position: myLatlng,
+                  map: map
+              });
+
+              google.maps.event.addListener(marker, 'dragend', function (event) 
+              {
+                document.getElementById("valet_current_latitude").value = event.latLng.lat();
+                document.getElementById("valet_current_longitude").value = event.latLng.lng();
+                document.getElementById("search_place").value = add;
+              });
+            }
+            google.maps.event.addDomListener(window, "load", initialize());
+          }
+        }); 
+    });
+</script>
+
+
+<style>
+    .btn-label {position: relative;left: -12px;display: inline-block;padding: 6px 12px;background: rgba(0,0,0,0.15);border-radius: 3px 0 0 3px;}
+    .btn-labeled {padding-top: 0;padding-bottom: 0;}
+    .btn { margin-bottom:10px; }
+</style>
