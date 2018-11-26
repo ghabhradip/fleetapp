@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
+  require 'sidekiq/web'
 
-
+  mount Sidekiq::Web, at: '/sidekiq'
+  
   resources :home do
     member do
         get :blacklist_user

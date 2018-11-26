@@ -1,3 +1,6 @@
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5LrPhIokuSBO5EgKEcfu859gog6fRF8w&libraries=places&callback=initAutocomplete"
+         async defer></script>
+         
 <%= form_for(@valet, url: '/valet') do |f| %>
  
 <div class="container">
@@ -88,9 +91,11 @@
 <script>
     $("#valet_current_latitude").prop("readonly",true);
     $("#valet_current_longitude").prop("readonly",true);
-
+    // $("#map_canvas").hide();
 
     $("#search").on("click",function(){
+        // $("#map_canvas").show();
+
         var geocoder = new google.maps.Geocoder();
         $(".map_location").show();  
         var add = $("#search_place").val();
@@ -139,3 +144,4 @@
     .btn-labeled {padding-top: 0;padding-bottom: 0;}
     .btn { margin-bottom:10px; }
 </style>
+

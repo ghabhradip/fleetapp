@@ -16,3 +16,14 @@
  *= require_tree .
  *= require_self
  */
+
+.alert {
+    padding: 11px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    height: 41px;
+    width: 206px;
+    position: absolute;
+    right: 10px;
+}

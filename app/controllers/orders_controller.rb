@@ -16,6 +16,10 @@ class OrdersController < ApplicationController
     @order.customer_name = params[:order][:customer_name]
     @order.pickup_address = params[:order][:pickup_address]
     @order.delivery_address = params[:order][:delivery_address]
+    @order.pickup_location_latitude = params[:order][:pickup_location_latitude]
+    @order.pickup_location_longitude = params[:order][:pickup_location_longitude]
+    @order.delivery_location_latitude = params[:order][:delivery_location_latitude]
+    @order.delivery_location_longitude = params[:order][:delivery_location_longitude]
 
     @order.pickup_date = Date.strptime(params[:order][:pickup_date], '%m/%d/%Y')
     pickup_time = Tod::TimeOfDay.parse params[:order][:pickup_time]

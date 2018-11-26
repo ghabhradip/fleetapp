@@ -1,5 +1,14 @@
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5LrPhIokuSBO5EgKEcfu859gog6fRF8w&libraries=places&callback=initAutocomplete"
+         async defer></script>
 <%= form_for(@order, url: '/orders') do |f| %>
  
+<%= f.hidden_field :pickup_location_latitude, :value => "" %>
+<%= f.hidden_field :pickup_location_longitude, :value => "" %>
+
+<%= f.hidden_field :delivery_location_latitude, :value => "" %>
+<%= f.hidden_field :delivery_location_longitude, :value => "" %>
+
+
 <div class="container">
   <div class="row">
     <div class="col-sm-3"></div>
@@ -37,8 +46,14 @@
 
         <div class="form-group">
             <div>
-                <%= f.text_area :pickup_address, autocomplete: "off", class: "form-control", placeholder: "Mention your pickup address" %>
+                <%= f.text_area :pickup_address, autocomplete: "off", class: "form-control", placeholder: "Your pickup address"%>
+                <input type="text" name="search_pickup_address" id="pickup_search" class="form-control" placeholder="Type your pickup address here..." >
             </div>
+            <small>Start typing your pickup address here or simply move the marker over the map below.</small>
+        </div>
+
+        <div class="form-group">
+            <div id="map_canvas_pickup" style="width: auto; height: 250px;" class="map_location"></div>
         </div>
 
         <div class="form-group">
@@ -56,10 +71,16 @@
 
         <div class="form-group">
             <div>
-                <%= f.text_area :delivery_address, autocomplete: "off", class: "form-control", placeholder: "Mention your delivery address" %>
+                <%= f.text_area :delivery_address, autocomplete: "off", class: "form-control", placeholder: "Your delivery address" %>
+                <input type="text" name="search_delivery_address" id="delivery_search" class="form-control" placeholder="Type your delivery address here..." >
             </div>
+            <small>Start typing your delivery address here or simply move the marker over the map below.</small>
         </div>
 
+
+        <div class="form-group">
+            <div id="map_canvas_delivery" style="width: auto; height: 250px;" class="map_location"></div>
+        </div>
 
 
         <div class="form-group">
@@ -219,6 +240,231 @@
 
 
 <script>
+$("#order_pickup_address").prop("readonly",true);
+$("#order_delivery_address").prop("readonly",true);
+$('#order_customer_name').prop("readonly",true);
+// New map code ==============================================================================
+
+  function initAutocomplete() 
+  {
+    var pickup_map = new google.maps.Map(document.getElementById('map_canvas_pickup'), {
+      center: {lat: -33.8688, lng: 151.2195},
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: false,
+      fullscreenControl: false,
+      streetViewControl: false,
+    });
+
+    var delivery_map = new google.maps.Map(document.getElementById('map_canvas_delivery'), {
+      center: {lat: -33.8688, lng: 151.2195},
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: false,
+      fullscreenControl: false,
+      streetViewControl: false,
+    });
+
+
+    // Create the search box and link it to the UI element.
+    var input_pickup = document.getElementById('pickup_search');
+    var searchBox = new google.maps.places.SearchBox(input_pickup);
+    pickup_map.controls[google.maps.ControlPosition.TOP_LEFT].push(input_pickup);
+
+    var input_delivery = document.getElementById('delivery_search');
+    var searchBox_delivery = new google.maps.places.SearchBox(input_delivery);
+    delivery_map.controls[google.maps.ControlPosition.TOP_LEFT].push(input_delivery);
+
+    // Bias the SearchBox results towards current map's viewport.
+    pickup_map.addListener('bounds_changed', function() {
+      searchBox.setBounds(pickup_map.getBounds());
+    });
+
+    delivery_map.addListener('bounds_changed', function() {
+      searchBox_delivery.setBounds(delivery_map.getBounds());
+    });
+
+    var markers = [];
+    // Listen for the event fired when the user selects a prediction and retrieve
+    // more details for that place.
+    searchBox.addListener('places_changed', function() {
+      var places = searchBox.getPlaces();
+
+      if (places.length == 0) {
+        return;
+      }
+
+      // Placing the selected address into the address box
+      $("#order_pickup_address").val($("#pickup_search").val());
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode( { 'address': $("#pickup_search").val()}, function(results, status) 
+      {
+        if (status == google.maps.GeocoderStatus.OK) 
+        {
+            $("#order_pickup_location_latitude").val(results[0].geometry.location.lat());
+            $("#order_pickup_location_longitude").val(results[0].geometry.location.lng());
+        }
+      });
+
+      
+
+      // Clear out the old markers.
+      markers.forEach(function(marker) {
+        marker.setMap(null);
+      });
+      markers = [];
+
+      // For each place, get the icon, name and location.
+      var bounds = new google.maps.LatLngBounds();
+      places.forEach(function(place) {
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+        var icon = {
+          url: place.icon,
+          size: new google.maps.Size(71, 71),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(17, 34),
+          scaledSize: new google.maps.Size(25, 25)
+        };
+
+        // Create a marker for each place.
+        markers.push(new google.maps.Marker({
+          map: pickup_map,
+          draggable: true,
+          title: place.name,
+          position: place.geometry.location
+        }));
+
+        last_marker = markers[markers.length-1];
+        google.maps.event.addListener(last_marker, 'dragend', function (event) 
+        {         
+            var latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()};
+            var geocoder = new google.maps.Geocoder;
+            geocoder.geocode({'location': latlng}, function(results, status) {
+              if (status === 'OK') {
+                if (results[0]) 
+                {
+                  $("#order_pickup_address").val(results[0].formatted_address);
+                  $("#pickup_search").val(results[0].formatted_address);
+                  $("#order_pickup_location_latitude").val(event.latLng.lat());
+                  $("#order_pickup_location_longitude").val(event.latLng.lng());
+                } 
+                else 
+                {
+                  window.alert('No results found');
+                }
+              } 
+              else 
+              {
+                window.alert('Geocoder failed due to: ' + status);
+              }
+            });
+        });
+
+
+        if (place.geometry.viewport) {
+          // Only geocodes have viewport.
+          bounds.union(place.geometry.viewport);
+        } else {
+          bounds.extend(place.geometry.location);
+        }
+      });
+      pickup_map.fitBounds(bounds);
+    });
+
+////////////////////////////////////////////////////////////////////////////
+    var markers_delivery = [];
+    searchBox_delivery.addListener('places_changed', function() {
+      var places = searchBox_delivery.getPlaces();
+
+      if (places.length == 0) {
+        return;
+      }
+
+      // Placing the selected address into the address box
+      $("#order_delivery_address").val($("#delivery_search").val());
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode( { 'address': $("#delivery_search").val()}, function(results, status) 
+      {
+        if (status == google.maps.GeocoderStatus.OK) 
+        {
+            $("#order_delivery_location_latitude").val(results[0].geometry.location.lat());
+            $("#order_delivery_location_longitude").val(results[0].geometry.location.lng());
+        }
+      });
+
+
+      // Clear out the old markers.
+      markers_delivery.forEach(function(marker) {
+        marker.setMap(null);
+      });
+      markers_delivery = [];
+
+      // For each place, get the icon, name and location.
+      var bounds = new google.maps.LatLngBounds();
+      places.forEach(function(place) {
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+        var icon = {
+          url: place.icon,
+          size: new google.maps.Size(71, 71),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(17, 34),
+          scaledSize: new google.maps.Size(25, 25)
+        };
+
+        // Create a marker for each place.
+        markers_delivery.push(new google.maps.Marker({
+          map: delivery_map,
+          draggable: true,
+          title: place.name,
+          position: place.geometry.location
+        }));
+
+        last_marker = markers_delivery[markers_delivery.length-1];
+        google.maps.event.addListener(last_marker, 'dragend', function (event) 
+        {         
+            var latlng = {lat: event.latLng.lat(), lng: event.latLng.lng()};
+            var geocoder = new google.maps.Geocoder;
+            geocoder.geocode({'location': latlng}, function(results, status) {
+              if (status === 'OK') {
+                if (results[0]) 
+                {
+                  $("#order_delivery_address").val(results[0].formatted_address);
+                  $("#delivery_search").val(results[0].formatted_address);
+                  $("#order_delivery_location_latitude").val(event.latLng.lat());
+                  $("#order_delivery_location_longitude").val(event.latLng.lng());
+                } 
+                else 
+                {
+                  window.alert('No results found');
+                }
+              } 
+              else 
+              {
+                window.alert('Geocoder failed due to: ' + status);
+              }
+            });
+        });
+
+
+        if (place.geometry.viewport) {
+          // Only geocodes have viewport.
+          bounds.union(place.geometry.viewport);
+        } else {
+          bounds.extend(place.geometry.location);
+        }
+      });
+      delivery_map.fitBounds(bounds);
+    });
+  }
+
+
+
 $('.timepicker').timepicker();
 $("#scheduled_delivery_section").hide();
 
@@ -252,10 +498,12 @@ $( "#for_self" ).on( "click", function() {
 	if($(this).is(':checked'))
 	{
 		$('#order_customer_name').val(gon.user_name);
+        $('#order_customer_name').prop("readonly",true);
 	}
 	else
 	{
 		$('#order_customer_name').val("");
+        $('#order_customer_name').prop("readonly",false);
 	}
 });
 
@@ -395,7 +643,6 @@ $("input[name='online_payment_radio']").change(function(){
 $( "#order_submit_button" ).on( "click", function() {
     // All JS checking will happen here--------------------------
     var order_value = $("#payable_span").html().replace("Net payable - ","").replace("<b>","").replace("</b>","");
-    alert(order_value);
     $("#order_value").val(order_value);
     $('form').submit();
 
@@ -448,5 +695,23 @@ $( "#order_submit_button" ).on( "click", function() {
     {
         font-size: 97%;
         color: #800000;
+    }
+    #pickup_search
+    {
+        z-index: 1 !important;
+        position: absolute !important;
+        left: 52px !important;
+        top: 10px !important;
+        width: 80% !important;
+        border-radius: 3px;
+    }
+    #delivery_search
+    {
+        z-index: 1 !important;
+        position: absolute !important;
+        left: 52px !important;
+        top: 10px !important;
+        width: 80% !important;
+        border-radius: 3px;
     }
 </style>
