@@ -1,15 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  recipient_id: 1
-  action: MyString
-  notifiable_type: MyString
-  notifiable_id: 1
+  user_id: 1
+  details: MyString
+  read: false
 
 two:
-  user: two
-  recipient_id: 1
-  action: MyString
-  notifiable_type: MyString
-  notifiable_id: 1
+  user_id: 1
+  details: MyString
+  read: false

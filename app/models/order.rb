@@ -16,6 +16,6 @@ class Order < ApplicationRecord
 	end
 
 	def notify_pusher
-       Pusher.trigger('feed', 'order-update', self.as_json)
+       #Pusher.trigger('feed', 'order-update', self.as_json)
     end
 end

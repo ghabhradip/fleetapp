@@ -55,6 +55,19 @@ class OrdersController < ApplicationController
           count = count + 1
         end
       end
+
+
+      @notification = Notification.new
+      @notification.user_id = current_user.id
+      @notification.details = "Order "+ @order.id.to_s+"  successfully placed."
+      @notification.read = nil
+      
+      if @notification.save
+        Pusher.trigger('my-channel', 'order-update', {
+          message: current_user.unread_notification_count.to_s
+        })
+      end
+
       flash[:notice] = "Order successfully created."
       redirect_to list_blogs_home_index_path
     else
@@ -91,7 +104,7 @@ class OrdersController < ApplicationController
 
 
   def history
-    @orders = Order.where(:user_id => current_user.id)
+    @orders = Order.where(:user_id => current_user.id).order(created_at: :desc)
   end
 
   def list

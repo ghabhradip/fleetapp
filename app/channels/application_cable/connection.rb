@@ -1,19 +1,19 @@
 module ApplicationCable
   class Connection < ActionCable::Connection::Base
-  	# identified_by :current_user
+  	identified_by :current_user
 
-   #  def connect
-   #    self.current_user = find_verfied_user
-   #  end
+    def connect
+      self.current_user = find_verfied_user
+    end
 
-   #  protected
+    protected
 
-   #  def find_verfied_user
-   #    if current_user = env['development'].user
-   #      current_user
-   #    else
-   #      reject_unauthorized_connection
-   #    end
-   #  end
+    def find_verfied_user
+      if current_user = User.find(1)
+        current_user
+      else
+        reject_unauthorized_connection
+      end
+    end
   end
 end
