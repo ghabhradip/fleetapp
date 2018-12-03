@@ -82,11 +82,29 @@
             <% current_user.unread_notifications.limit(4).each do |notification|%>
               <div class="drop-content">
                 <li>
-                  <div class="col-md-3 col-sm-3 col-xs-3"><div class="notify-img"><img src="/assets/order_notify.png" alt=""></div></div>
-                  <div class="col-md-9 col-sm-9 col-xs-9 pd-l0"><a href="">Order placed</a><a href="" class="rIcon"><i class="fa fa-dot-circle-o"></i></a>
-                  <p><%=notification.details%></p>
-                  <p class="time"><%= notification.created_at.localtime.strftime('%a, %d %b %Y %H:%M:%S')%></p>
-                  </div>
+                  <%if notification.notification_type == "order placed" %>
+                      <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="notify-img">
+                          <img src="/assets/order_notify.png" alt="">
+                        </div>
+                      </div>
+                      <div class="col-md-9 col-sm-9 col-xs-9 pd-l0">
+                        <a href="">Order placed</a><a href="" class="rIcon"><i class="fa fa-dot-circle-o"></i></a>
+                        <p><%=notification.details%></p>
+                         <p class="time"><%= notification.created_at.localtime.strftime('%a, %d %b %Y %H:%M:%S')%></p>
+                      </div>
+                  <%elsif notification.notification_type == "valet assigned"%>
+                      <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="notify-img">
+                          <img src="/assets/delivery_man.png" alt="">
+                        </div>
+                      </div>
+                      <div class="col-md-9 col-sm-9 col-xs-9 pd-l0">
+                        <a href="">Valet assigned</a><a href="" class="rIcon"><i class="fa fa-dot-circle-o"></i></a>
+                        <p><%=notification.details%></p>
+                         <p class="time"><%= notification.created_at.localtime.strftime('%a, %d %b %Y %H:%M:%S')%></p>
+                      </div>
+                  <%end%>
                 </li>
               </div>
             <%end%>
@@ -135,6 +153,17 @@
   var channel = pusher.subscribe('my-channel');
   channel.bind('order-update', function(data) {
     stringify = JSON.parse(JSON.stringify(data));
-    $("#notification_count").html(stringify["message"]);
+
+    if (stringify["type"] == "order placed")
+    {
+      $("#notification_count").html(stringify["message"]);
+      $.notify("Your order has been placed successfully.","success");
+    }
+    else if (stringify["type"] == "valet assigned")
+    {
+      var valet_name = stringify["valet"];
+      $("#notification_count").html(stringify["message"]);
+      $.notify(valet_name+" will pickup your order soon","success");
+    }
   });
 </script>
