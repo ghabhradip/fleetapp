@@ -1,0 +1,14 @@
+development:
+  privateApiKey: test_94db15802250b4364a15f28af8d
+  privateAuthToken: test_0b9bc938fcbb31528cb77e61ebe
+  privateSalt: b486848e21fc4e658ac714b5d0f1aec8
+
+test:
+  privateApiKey: test_94db15802250b4364a15f28af8d
+  privateAuthToken: test_0b9bc938fcbb31528cb77e61ebe
+  privateSalt: b486848e21fc4e658ac714b5d0f1aec8
+
+production:
+  privateApiKey: test_94db15802250b4364a15f28af8d
+  privateAuthToken: test_0b9bc938fcbb31528cb77e61ebe
+  privateSalt: b486848e21fc4e658ac714b5d0f1aec8
